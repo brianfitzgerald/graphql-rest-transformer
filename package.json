@@ -1,6 +1,6 @@
 {
   "name": "graphql-rest-transformer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description":
     "Allows you to query a GraphQL interface like you'd query a REST URL. I wrote this to help me learn GraphQL, but it might have some practical use as well, as a means of ensuring backwards compatibility with REST APIs.",
   "main": "build/index.js",
