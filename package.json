@@ -1,12 +1,13 @@
 {
-  "name": "graphql-rest",
+  "name": "graphql-rest-transformer",
   "version": "1.0.0",
-  "description": "",
+  "description": "Allows you to query a GraphQL interface like you'd query a REST URL. I wrote this to help me learn GraphQL, but it might have some practical use as well, as a means of ensuring backwards compatibility with REST APIs.",
+  "main": "build/index.js",
   "scripts": {
+    "build": "tsc",
     "dev": "concurrently -n \"tsc,server\" \"tsc -w\" \"nodemon build/index.js\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^4.11.1",
@@ -22,5 +23,13 @@
     "@types/graphql": "^0.13.0",
     "express-graphql": "^0.6.12",
     "graphql": "^0.13.2"
-  }
+  },
+  "keywords": [
+    "graphql",
+    "rest",
+    "json",
+    "express",
+    "node"
+  ],
+  "author": "Brian Fitzgerald"
 }

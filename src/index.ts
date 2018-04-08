@@ -53,7 +53,10 @@ ${itemType}(id: ${id}) {
 
 // persons/44?fields=name,cars/books/22?fields=title
 
-export function restToGraphQL(req: express.Request, res: express.Response) {
+export default function restToGraphQL(
+  req: express.Request,
+  res: express.Response
+) {
   let requestParams = req.url.split("/").slice(2)
 
   requestParams = requestParams.map(

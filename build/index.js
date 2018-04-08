@@ -68,7 +68,7 @@ function restToGraphQL(req, res) {
         console.error(err);
     });
 }
-exports.restToGraphQL = restToGraphQL;
+exports.default = restToGraphQL;
 app.get(RegExp("api/*"), restToGraphQL);
 exports.APPLICATION_PORT = 3000;
 app.listen(exports.APPLICATION_PORT, function () {
