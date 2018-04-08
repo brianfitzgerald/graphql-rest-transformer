@@ -51,8 +51,6 @@ ${itemType}(id: ${id}) {
 }
 `
 
-// persons/44?fields=name,cars/books/22?fields=title
-
 export default function restToGraphQL(
   req: express.Request,
   res: express.Response
