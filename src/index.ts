@@ -51,8 +51,20 @@ ${itemType}(id: ${id}) {
 }
 `
 
+// persons/44?fields=name,cars/books/22?fields=title
+
 export function restToGraphQL(req: express.Request, res: express.Response) {
-  const requestParams = req.url.split("/").slice(2)
+  let requestParams = req.url.split("/").slice(2)
+
+  requestParams = requestParams.map(
+    p => (p.indexOf("?") === -1 ? p : p.substr(0, p.indexOf("?")))
+  )
+
+  let fields = ""
+
+  if (Object.keys(req.query).length > 0) {
+    fields = req.query.fields.split(",").join("\n")
+  }
 
   const reducedStatement = requestParams
     .reverse()
@@ -61,11 +73,7 @@ export function restToGraphQL(req: express.Request, res: express.Response) {
         return accumulator
       } else {
         if (array.length === currentIndex + 1) {
-          return queryTemplate(
-            currentValue,
-            array[currentIndex - 1],
-            "firstName"
-          )
+          return queryTemplate(currentValue, array[currentIndex - 1], fields)
         } else {
           return queryTemplate(
             currentValue,
@@ -78,6 +86,12 @@ export function restToGraphQL(req: express.Request, res: express.Response) {
 
   graphql(schema, `{ ${reducedStatement} }`, rootResolver)
     .then((value: ExecutionResult) => {
+      if (value.errors) {
+        console.error(value.errors)
+        res.json(value.errors)
+        return
+      }
+
       res.json(value.data)
     })
     .catch(err => {

@@ -32,17 +32,14 @@ app.use("/graphql", graphqlHTTP({
     graphiql: true
 }));
 var queryTemplate = function (itemType, id, child) { return "\n" + itemType + "(id: " + id + ") {\n  " + child + "\n}\n"; };
+// persons/44?fields=name,cars/books/22?fields=title
 function restToGraphQL(req, res) {
     var requestParams = req.url.split("/").slice(2);
-    var parsedParams = requestParams.map(function (element, index) {
-        var item = {
-            element: element,
-            type: "kind"
-        };
-        if (index % 2 === 0) {
-            item.type = "id";
-        }
-    });
+    requestParams = requestParams.map(function (p) { return (p.indexOf("?") === -1 ? p : p.substr(0, p.indexOf("?"))); });
+    var fields = "";
+    if (Object.keys(req.query).length > 0) {
+        fields = req.query.fields.split(",").join("\n");
+    }
     var reducedStatement = requestParams
         .reverse()
         .reduce(function (accumulator, currentValue, currentIndex, array) {
@@ -51,7 +48,7 @@ function restToGraphQL(req, res) {
         }
         else {
             if (array.length === currentIndex + 1) {
-                return queryTemplate(currentValue, array[currentIndex - 1], "firstName");
+                return queryTemplate(currentValue, array[currentIndex - 1], fields);
             }
             else {
                 return queryTemplate(currentValue, array[currentIndex - 1], accumulator);
@@ -60,6 +57,11 @@ function restToGraphQL(req, res) {
     });
     graphql_1.graphql(schema, "{ " + reducedStatement + " }", rootResolver)
         .then(function (value) {
+        if (value.errors) {
+            console.error(value.errors);
+            res.json(value.errors);
+            return;
+        }
         res.json(value.data);
     })
         .catch(function (err) {
