@@ -54,16 +54,6 @@ ${itemType}(id: ${id}) {
 export function restToGraphQL(req: express.Request, res: express.Response) {
   const requestParams = req.url.split("/").slice(2)
 
-  const parsedParams = requestParams.map((element, index) => {
-    const item = {
-      element,
-      type: "kind"
-    }
-    if (index % 2 === 0) {
-      item.type = "id"
-    }
-  })
-
   const reducedStatement = requestParams
     .reverse()
     .reduce((accumulator, currentValue, currentIndex, array) => {
