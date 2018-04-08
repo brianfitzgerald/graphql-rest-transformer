@@ -20,6 +20,10 @@ const persons = [
   {
     id: 2,
     firstName: "John"
+  },
+  {
+    id: 3,
+    firstName: "Conner"
   }
 ]
 
