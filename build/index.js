@@ -32,9 +32,8 @@ app.use("/graphql", graphqlHTTP({
     graphiql: true
 }));
 var queryTemplate = function (itemType, id, child) { return "\n" + itemType + "(id: " + id + ") {\n  " + child + "\n}\n"; };
-app.get(RegExp("api/*"), function (req, res) {
-    var rawQuery = req.url.slice(5);
-    var requestParams = rawQuery.split("/");
+function restToGraphQL(req, res) {
+    var requestParams = req.url.split("/").slice(2);
     var parsedParams = requestParams.map(function (element, index) {
         var item = {
             element: element,
@@ -59,20 +58,16 @@ app.get(RegExp("api/*"), function (req, res) {
             }
         }
     });
-    console.log(reducedStatement);
-    // person(id: 2) {
-    //   id
-    //   firstName
-    // }
     graphql_1.graphql(schema, "{ " + reducedStatement + " }", rootResolver)
         .then(function (value) {
-        console.log(value);
         res.json(value.data);
     })
         .catch(function (err) {
-        console.log(err);
+        console.error(err);
     });
-});
+}
+exports.restToGraphQL = restToGraphQL;
+app.get(RegExp("api/*"), restToGraphQL);
 exports.APPLICATION_PORT = 3000;
 app.listen(exports.APPLICATION_PORT, function () {
     console.log("Server is listening on port " + exports.APPLICATION_PORT);

@@ -51,9 +51,8 @@ ${itemType}(id: ${id}) {
 }
 `
 
-app.get(RegExp("api/*"), (req, res) => {
-  const rawQuery = req.url.slice(5)
-  const requestParams = rawQuery.split("/")
+export function restToGraphQL(req: express.Request, res: express.Response) {
+  const requestParams = req.url.split("/").slice(2)
 
   const parsedParams = requestParams.map((element, index) => {
     const item = {
@@ -87,23 +86,16 @@ app.get(RegExp("api/*"), (req, res) => {
       }
     })
 
-  console.log(reducedStatement)
-
-  // person(id: 2) {
-  //   id
-  //   firstName
-  // }
-
   graphql(schema, `{ ${reducedStatement} }`, rootResolver)
     .then((value: ExecutionResult) => {
-      console.log(value)
-
       res.json(value.data)
     })
     .catch(err => {
-      console.log(err)
+      console.error(err)
     })
-})
+}
+
+app.get(RegExp("api/*"), restToGraphQL)
 
 export const APPLICATION_PORT = 3000
 
